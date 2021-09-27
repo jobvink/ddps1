@@ -35,7 +35,7 @@ class WindowedAggregation:
             .map(lambda aggregated_result: {'packID': aggregated_result[0],
                                             'price': aggregated_result[1][0],
                                             'latency': time.time() - aggregated_result[1][1]}) \
-            .pprint()
+            .saveAsTextFiles('results/windowed_aggregation/')
 
         self.ssc.start()
         self.ssc.awaitTermination()

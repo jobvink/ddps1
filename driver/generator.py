@@ -16,16 +16,19 @@ class BenchmarkGenerator:
         self.packs = {i: self.prices[i] for i in range(len(self.prices))}
         self.pack_ids = [pack_id for pack_id in self.packs.keys()]
 
-    def generate(self, queue: Queue, budget: int):
+    def generate(self, queue: Queue, rate: int):
         """
         This function will fill the provided queue with purchase instances.
 
         :param queue: The queue that will be filled with purchase instances
-        :param budget: The budget for this generator
+        :param rate: The rate for the throughput of the system in generations per second
         :return:
         """
         while True:
+            start_time = time.time()
             queue.put(self.gen_purchase())
+            end_time = time.time()
+            time.sleep(max(0.0, 1 / rate - (end_time - start_time)))
 
     def gen_purchase(self) -> (int, int, float, float):
         """

@@ -18,8 +18,9 @@ class DataStreamer:
     queue: Queue
     generators: []
 
-    def __init__(self, n_generators: int, max_queue_size: int, budget: int):
+    def __init__(self, n_generators: int, rate: int, max_queue_size: int, budget: int):
         self.n_generators = n_generators
+        self.rate = rate
         self.budget = budget
         self.queue = Queue(max_queue_size)
 
@@ -29,11 +30,11 @@ class DataStreamer:
         # These generators wil fill up the queue with purchase instances
         # in there own separate threads. Every generator generates an equal
         # amount of instances. Note: the generator may go over budget because
-        # the budget is divided into equal parts and rounded up.
+        # the budget is divided into equal parts and rounded up. Same holds for the rate
         self.generators = [
             Process(
                 target=generator.generate,
-                args=(self.queue, math.ceil(self.budget / self.n_generators)),
+                args=(self.queue, math.ceil(self.rate / self.n_generators)),
                 daemon=True
             )
             for _ in range(self.n_generators)

@@ -1,4 +1,4 @@
-from driver.consoleprinter import PrinterConsumer
+from benchmarks.dev.consoleprinter import PrinterConsumer
 from driver.benchmark import DataStreamer
 
 if __name__ == '__main__':

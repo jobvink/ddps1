@@ -24,7 +24,7 @@ class BenchmarkGenerator:
         :param budget: The budget for this generator
         :return:
         """
-        for _ in range(budget):
+        while True:
             queue.put(self.gen_purchase())
 
     def gen_purchase(self) -> (int, int, float, float):

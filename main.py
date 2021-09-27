@@ -1,7 +1,6 @@
-from benchmarks.dev.consoleprinter import PrinterConsumer
-from driver.benchmark import DataStreamer
+from benchmarks.spark.WindowedAggregation import WindowedAggregation
+
 
 if __name__ == '__main__':
-    consumer = PrinterConsumer()
-    streamer = DataStreamer(consumer, 2, 100, 10)
-    streamer.run()
+    aggregation = WindowedAggregation('localhost', 9017)
+    aggregation.run()

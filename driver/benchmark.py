@@ -2,7 +2,6 @@ import math
 from multiprocessing import Process, Queue
 
 from driver.generator import BenchmarkGenerator
-from driver.consumer import Consumer
 
 
 class DataStreamer:
@@ -14,13 +13,12 @@ class DataStreamer:
     :param max_queue_size: maximum size of the queue
     :param budget: this budged will be distributed over the generators
     """
+    budget: int
     n_generators: int
     queue: Queue
     generators: []
-    consumer: Consumer
 
-    def __init__(self, consumer: Consumer, n_generators: int, max_queue_size: int, budget: int):
-        self.consumer = consumer
+    def __init__(self, n_generators: int, max_queue_size: int, budget: int):
         self.n_generators = n_generators
         self.budget = budget
         self.queue = Queue(max_queue_size)
@@ -41,13 +39,21 @@ class DataStreamer:
             for _ in range(self.n_generators)
         ]
 
-    def run(self) -> None:
+    def start(self) -> None:
         """
         Starts the generator and runs the benchmark
         """
         for generator in self.generators:
             generator.start()
 
-        for i in range(self.budget):
-            data = self.queue.get()
-            self.consumer.update(data)
+    def next(self):
+        purchase = self.queue.get()
+        return {
+            'userId': int(purchase[0]),
+            'packID': int(purchase[1]),
+            'price': float(purchase[2]),
+            'event_time': purchase[3]
+        }
+
+    def get_budget(self):
+        return self.budget

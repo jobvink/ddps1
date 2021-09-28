@@ -10,11 +10,12 @@ class WindowedAggregation:
     ssc: StreamingContext
     spark: SparkSession
 
-    def __init__(self, host, port, storage):
+    def __init__(self, master, host, port, storage):
+        self.master = master
         self.host = host
         self.port = port
         self.storage = storage
-        self.sc = SparkContext("local[2]", "Windowed Aggregation Query")
+        self.sc = SparkContext(self.master, "Windowed Aggregation Query")
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
     @staticmethod

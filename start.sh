@@ -13,6 +13,8 @@ read -r -a workers <<< "$worker_list"
 # wait one second for the command to actually reserve the nodes
 sleep 1
 
+echo "reserved the following nodes: ${workers[@]}"
+
 if [ ${#workers[@]} -ne 8 ]; then
   echo 'not enough nodes available'
   exit 1

@@ -10,9 +10,10 @@ class WindowedAggregation:
     ssc: StreamingContext
     spark: SparkSession
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, storage):
         self.host = host
         self.port = port
+        self.storage = storage
         self.sc = SparkContext("local[2]", "Windowed Aggregation Query")
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
@@ -35,7 +36,7 @@ class WindowedAggregation:
             .map(lambda aggregated_result: {'packID': aggregated_result[0],
                                             'price': aggregated_result[1][0],
                                             'latency': time.time() - aggregated_result[1][1]}) \
-            .saveAsTextFiles('results/windowed_aggregation/')
+            .saveAsTextFiles(self.storage)
 
         self.ssc.start()
         self.ssc.awaitTermination()

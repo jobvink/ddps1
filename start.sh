@@ -7,12 +7,13 @@ module load prun
 
 echo 'reserving nodes in the cluster'
 preserve -# 8 -t 00:01:00
-worker_list=$(preserve -llist | grep ddps2105 | awk '{print $9,$10,$11,$12,$13,$14,$15,$16}')
-read -r -a workers <<< "$worker_list"
 
 # wait one second for the command to actually reserve the nodes
 sleep 5
 preserve -llist
+
+worker_list=$(preserve -llist | grep ddps2105 | awk '{print $9,$10,$11,$12,$13,$14,$15,$16}')
+read -r -a workers <<< "$worker_list"
 echo "reserved the following nodes: ${workers[@]}"
 
 if [ ${#workers[@]} -ne 8 ]; then

@@ -72,4 +72,7 @@
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
 
-PYSPARK_PYTHON=/var/scratch/ddps2105/Python-3.9.7/python
+echo 'configuring spark for das-5'
+if [ -z "$PYTHONPATH" ] ; then
+  PYTHONPATH="/var/scratch/ddps2105/Python-3.9.7/python"
+fi

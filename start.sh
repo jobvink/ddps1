@@ -12,7 +12,7 @@ read -r -a workers <<< "$worker_list"
 
 # wait one second for the command to actually reserve the nodes
 sleep 5
-
+preserve -llist
 echo "reserved the following nodes: ${workers[@]}"
 
 if [ ${#workers[@]} -ne 8 ]; then
@@ -32,8 +32,8 @@ do
     echo "" | ssh "$worker" $SPARK_HOME/sbin/start-worker.sh spark://"${workers[0]}".cm.cluster:7077
 done
 
-python3 streamer.py &!
+/var/scratch/ddps2105/Python-3.9.7/python streamer.py &!
 sleep 5 # wait for the data streamer to start the generators
 
 mkdir -p "/var/scratch/ddps2105/results"
-python3 main.py --master spark://"${workers[0]}".cm.cluster:7077 --storage "/var/scratch/ddps2105/results"
+/var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://"${workers[0]}".cm.cluster:7077 --storage "/var/scratch/ddps2105/results"

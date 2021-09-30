@@ -3,4 +3,7 @@ tar xzf Python-3.9.7.tgz
 cd Python-3.9.7
 ./configure --enable-optimizations
 make
-python -m pip install -r ./requirements.txt
+wget https://bootstrap.pypa.io/get-pip.py
+./python get-pip.py
+rm get-pip.py
+python -m pip install -r ../ddps1/requirements.txt

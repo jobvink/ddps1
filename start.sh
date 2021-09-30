@@ -6,7 +6,7 @@ module load python/3.6.0
 module load prun
 
 echo 'reserving nodes in the cluster'
-preserve -# 8 -t 00:01:00
+preserve -# 8 -t 00:15:00
 
 # wait one second for the command to actually reserve the nodes
 sleep 1
@@ -37,4 +37,4 @@ echo "" | ssh "${workers[0]}" "cd /var/scratch/ddps2105/ddps1/; /var/scratch/ddp
 sleep 5 # wait for the data streamer to start the generators
 
 mkdir -p "/var/scratch/ddps2105/results"
-echo "" | ssh "${workers[0]}" "cd /var/scratch/ddps2105/ddps1/; /var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://${workers[0]}.cm.cluster:7077 --host ${workers[0]}.cm.cluster --storage /var/scratch/ddps2105/results"
+echo "" | ssh "${workers[0]}" "cd /var/scratch/ddps2105/ddps1/; /var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://${workers[0]}.cm.cluster:7077 --host ${workers[0]}.cm.cluster --storage /var/scratch/ddps2105/results/result"

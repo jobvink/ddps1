@@ -33,8 +33,8 @@ do
     echo "" | ssh "$worker" $SPARK_HOME/sbin/start-worker.sh spark://"${workers[0]}".cm.cluster:7077
 done
 
-/var/scratch/ddps2105/Python-3.9.7/python streamer.py &!
+echo "" | ssh "${workers[0]}" /var/scratch/ddps2105/Python-3.9.7/python streamer.py &!
 sleep 5 # wait for the data streamer to start the generators
 
 mkdir -p "/var/scratch/ddps2105/results"
-/var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://"${workers[0]}".cm.cluster:7077 --storage "/var/scratch/ddps2105/results"
+echo "" | ssh "${workers[0]}" /var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://"${workers[0]}".cm.cluster:7077 --storage "/var/scratch/ddps2105/results"

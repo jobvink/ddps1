@@ -11,7 +11,7 @@ worker_list=$(preserve -llist | grep ddps2105 | awk '{print $9,$10,$11,$12,$13,$
 read -r -a workers <<< "$worker_list"
 
 # wait one second for the command to actually reserve the nodes
-sleep 1
+sleep 5
 
 echo "reserved the following nodes: ${workers[@]}"
 

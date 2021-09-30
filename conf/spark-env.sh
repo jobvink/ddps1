@@ -73,6 +73,5 @@
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
 
 echo 'configuring spark for das-5'
-if [ -z "$PYTHONPATH" ] ; then
-  PYTHONPATH="/var/scratch/ddps2105/Python-3.9.7/python"
-fi
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:/var/scratch/ddps2105/Python-3.9.7/python
+export PATH=$SPARK_HOME/python:$PATH

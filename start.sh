@@ -9,7 +9,7 @@ echo 'reserving nodes in the cluster'
 preserve -# 8 -t 00:01:00
 
 # wait one second for the command to actually reserve the nodes
-sleep 5
+sleep 1
 preserve -llist
 
 worker_list=$(preserve -llist | grep ddps2105 | awk '{print $9,$10,$11,$12,$13,$14,$15,$16}')
@@ -30,11 +30,11 @@ echo "${workers[@]:1}"
 # initialize all the workers
 for worker in "${workers[@]:1}"
 do
-    echo "" | ssh "$worker" $SPARK_HOME/sbin/start-worker.sh spark://"${workers[0]}".cm.cluster:7077
+    echo "" | ssh "$worker" $SPARK_HOME/sbin/start-worker.sh spark://"${workers[0]}".cm.cluster:7077 &
 done
 
 echo "" | ssh "${workers[0]}" /var/scratch/ddps2105/Python-3.9.7/python /var/scratch/ddps2105/ddps1/streamer.py --host "${workers[0]}".cm.cluster &!
 sleep 5 # wait for the data streamer to start the generators
 
 mkdir -p "/var/scratch/ddps2105/results"
-echo "" | ssh "${workers[0]}" /var/scratch/ddps2105/Python-3.9.7/python /var/scratch/ddps2105/ddps1/main.py --master spark://"${workers[0]}".cm.cluster:7077 --storage "/var/scratch/ddps2105/results"
+echo "" | ssh "${workers[0]}" /var/scratch/ddps2105/Python-3.9.7/python /var/scratch/ddps2105/ddps1/main.py --master spark://"${workers[0]}".cm.cluster:7077 --host "${workers[0]}".cm.cluster --storage "/var/scratch/ddps2105/results"

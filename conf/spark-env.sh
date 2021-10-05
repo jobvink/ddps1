@@ -76,3 +76,4 @@ echo 'configuring spark for das-5'
 export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:/var/scratch/ddps2105/Python-3.9.7/python
 export PATH=$SPARK_HOME/python:$PATH
 export PATH=/var/scratch/ddps2105/Python-3.9.7:$PATH
+export PATH=/var/scratch/ddps2105/ddps1:$PATH

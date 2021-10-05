@@ -9,7 +9,7 @@ module load python/3.6.0
 module load prun
 
 echo 'reserving nodes in the cluster'
-preserve -# 8 -t 00:01:00
+preserve -# 8 -t 00:10:00
 
 # wait one second for the command to actually reserve the nodes
 sleep 1

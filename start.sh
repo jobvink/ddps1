@@ -37,7 +37,7 @@ do
 done
 
 echo "starting streamer node"
-echo "" | ssh "${workers[0]}" sh $CODE_PATH/streamer.sh ${workers[0]}
+echo "" | ssh "${workers[0]}" sh $CODE_PATH/streamer.sh ${workers[0]} &!
 sleep 5 # wait for the data streamer to start the generators
 
 echo "starting master node"

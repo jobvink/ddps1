@@ -19,6 +19,7 @@ class WindowedAggregation:
         self.port = port
         self.storage = storage
         self.sc = SparkContext(self.master, "Windowed Aggregation Query")
+        self.sc.addPyFile('/var/scratch/ddps2105/ddps1/main.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
     @staticmethod

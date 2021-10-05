@@ -1,6 +1,9 @@
 import argparse
 import os.path
 
+import sys
+sys.path.append("/var/scratch/ddps2105/ddps1")
+
 from benchmarks.spark.WindowedAggregation import WindowedAggregation
 
 if __name__ == '__main__':

@@ -33,12 +33,12 @@ echo "${workers[@]:1}"
 # initialize all the workers
 for worker in "${workers[@]:1}"
 do
-    echo "" | ssh "$worker" sh $CODE_PATH/worker.sh ${workers[0]}
+    echo "" | ssh "$worker" sh $CODE_PATH/worker.sh ${workers[0]} &!
 done
 
 echo "starting streamer node"
 echo "" | ssh "${workers[0]}" sh $CODE_PATH/streamer.sh ${workers[0]} &!
-sleep 5 # wait for the data streamer to start the generators
+sleep 10 # wait for the data streamer to start the generators
 
 echo "starting master node"
 mkdir -p "/var/scratch/ddps2105/results"

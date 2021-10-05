@@ -42,4 +42,4 @@ sleep 10 # wait for the data streamer to start the generators
 
 echo "starting master node"
 mkdir -p "/var/scratch/ddps2105/results"
-echo "" | ssh "${workers[0]}" $CODE_PATH/master.sh "${workers[0]}"
+echo "" | ssh "${workers[0]}" $CODE_PATH/master.sh "${workers[0]}" "${workers[1]}"

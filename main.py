@@ -40,6 +40,7 @@ class WindowedAggregation:
             .reduceByKey(self.aggregate) \
             .map(lambda aggregated_result: {'packID': aggregated_result[0],
                                             'price': aggregated_result[1][0],
+                                            'time': time.time(),
                                             'latency': time.time() - aggregated_result[1][1]}) \
             .saveAsTextFiles(self.storage)
 

@@ -1,14 +1,15 @@
 import argparse
+import json
 import os.path
+import time
 
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.functions import from_json, when, col, expr
 from pyspark.sql.types import StructType, StructField, IntegerType, FloatType
 from pyspark.streaming import StreamingContext
 
 
-class WindowedAggregation:
+class WindowedJoin:
     ssc: StreamingContext
     spark: SparkSession
 
@@ -18,41 +19,22 @@ class WindowedAggregation:
         self.port = port
         self.storage = storage
 
-        self.spark = SparkSession \
-            .builder \
-            .master(self.master) \
-            .appName("Windowed Aggregation Query") \
-            .getOrCreate()
-
-        self.lines = self.spark \
-            .readStream \
-            .format('socket') \
-            .option('host', self.host) \
-            .option('port', self.port) \
-            .load()
+        self.sc = SparkContext(self.master, "Windowed Aggregation Query")
+        # self.sc.addPyFile('/var/scratch/ddps2105/ddps1/join.py')
+        self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
         self.purchase_schema = StructType([
-            StructField('userId', IntegerType(), False),
+            StructField('userID', IntegerType(), False),
             StructField('gemPackID', IntegerType(), False),
             StructField('price', FloatType(), True),
             StructField('time', FloatType(), False),
         ])
 
         self.ad_schema = StructType([
-            StructField('userId', IntegerType(), False),
+            StructField('userID', IntegerType(), False),
             StructField('gemPackID', IntegerType(), False),
             StructField('time', FloatType(), False),
         ])
-
-    @staticmethod
-    def aggregate(a, b) -> (float, float):
-        """
-        This function returns the sum of the price and the max of the event time
-        :rtype: (float, float)
-        """
-        a = (0, 0) if a is None else a
-        b = (0, 0) if b is None else b
-        return a[0] + b[0], max(a[1], b[1])
 
     def run(self):
         """
@@ -64,27 +46,31 @@ class WindowedAggregation:
                 p.gemPackID = a.gemPackID
         """
 
-        purchases: DataFrame = self.lines \
-            .selectExpr('CAST(value AS STRING) value') \
-            .where(col('value').like('%price%')) \
-            .select(from_json(col('value'), schema=self.purchase_schema).alias('p')) \
-            .select('p.*')
+        lines = self.ssc.socketTextStream(self.host, self.port)
 
-        ads: DataFrame = self.lines \
-            .selectExpr('CAST(value AS STRING) value') \
-            .where(~col('value').like('%price%')) \
-            .select(from_json(col('value'), schema=self.purchase_schema).alias('a')) \
-            .select('a.*')
+        purchases: DataFrame = lines \
+            .filter(lambda line: 'price' in line) \
+            .map(json.loads) \
+            .map(lambda x: ('u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), x))
 
-        query = purchases \
-            .join(ads, [purchases.userId == ads.userId, purchases.gemPackID == ads.gemPackID]) \
-            .writeStream \
-            .format('console') \
-            .trigger(processingTime='2 seconds') \
-            .option('truncate', 'False') \
-            .start()
+        ads = lines \
+            .filter(lambda line: 'price' not in line) \
+            .map(json.loads) \
+            .map(lambda x: ('u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), x))
 
-        query.awaitTermination()
+        purchases \
+            .join(ads) \
+            .map(lambda record: {"userID": record[1][0]['userID'],
+                                 "gemPackID:": record[1][1]['gemPackID'],
+                                 "p.time": record[1][0]['time'],
+                                 "a.time": record[1][1]['time'],
+                                 "time": max(record[1][0]['time'], record[1][1]['time']),
+                                 "latency": time.time() - max(record[1][0]['time'], record[1][1]['time']),
+                                 }) \
+            .pprint()
+
+        self.ssc.start()
+        self.ssc.awaitTermination()
 
 
 if __name__ == '__main__':
@@ -99,5 +85,5 @@ if __name__ == '__main__':
 
     os.makedirs(args.storage, exist_ok=True)
 
-    aggregation = WindowedAggregation(args.master, args.host, args.port, args.storage)
+    aggregation = WindowedJoin(args.master, args.host, args.port, args.storage)
     aggregation.run()

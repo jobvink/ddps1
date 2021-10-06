@@ -23,4 +23,4 @@ export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 #export HADOOP_OPTS"-Djava.library.path=$HADOOP_HOME/lib/native"
 
 echo "Starting master (/var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://$1.cm.cluster:7077 --host $2.cm.cluster --storage /var/scratch/ddps2105/results/result)"
-/var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://$1.cm.cluster:7077 --host $1.cm.cluster --storage /var/scratch/ddps2105/results/result
+/var/scratch/ddps2105/Python-3.9.7/python main.py --master spark://$1.cm.cluster:7077 --host $2.cm.cluster --storage /var/scratch/ddps2105/results/result

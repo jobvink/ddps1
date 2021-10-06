@@ -13,12 +13,22 @@ if __name__ == '__main__':
     parser.add_argument('--generators', type=int, default=16, help='number of generators')
     parser.add_argument('--max_queue_size', type=int, default=10_000,
                         help='maximum queue size for the generated transactions')
+    parser.add_argument('--p-purchase', type=float, default=0.5,
+                        help="probability of an purchase to be generated, this value and --p-ad have to sum up to 1 ")
+    parser.add_argument('--p-ad', type=float, default=0.5,
+                        help="probability of an ad to be generated, this value and --p-purchase have to sum up to 1 ")
 
     args = parser.parse_args()
 
+    if args.p_purchase + args.p_ad != 1.0:
+        print('--p-purchase and --p-ad do not sum up to 1 but to {}'.format(args.p_purchase + args.p_ad))
+        exit(1)
+
     generator = DataStreamer(args.generators,
-                             math.ceil(args.budget / args.rate),
+                             args.rate,
                              math.ceil(args.budget / args.max_queue_size),
-                             args.budget)
+                             args.budget,
+                             args.p_purchase,
+                             args.p_ad)
     streamer = NetworkStreamer(args.host, args.port, generator)
     streamer.run()

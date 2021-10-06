@@ -21,7 +21,7 @@ class WindowedAggregation:
     @staticmethod
     def aggregate(a, b) -> (float, float):
         """
-        This function returns the sum of the price and the max of the event_time
+        This function returns the sum of the price and the max of the event time
         :rtype: (float, float)
         """
         a = (0, 0) if a is None else a
@@ -32,7 +32,7 @@ class WindowedAggregation:
 
         self.ssc.socketTextStream(self.host, self.port) \
             .map(json.loads) \
-            .map(lambda purchase: (str(purchase['packID']), (purchase['price'], purchase['event_time']))) \
+            .map(lambda purchase: (str(purchase['packID']), (purchase['price'], purchase['time']))) \
             .reduceByKey(self.aggregate) \
             .map(lambda aggregated_result: {'packID': aggregated_result[0],
                                             'price': aggregated_result[1][0],

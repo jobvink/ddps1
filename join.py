@@ -64,7 +64,7 @@ class WindowedJoin:
                                  "gemPackID:": record[1][1]['gemPackID'],
                                  "p.time": record[1][0]['time'],
                                  "a.time": record[1][1]['time'],
-                                 "time": max(record[1][0]['time'], record[1][1]['time']),
+                                 "time": time.time(),
                                  "latency": time.time() - max(record[1][0]['time'], record[1][1]['time']),
                                  }) \
             .saveAsTextFiles(self.storage)

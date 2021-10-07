@@ -20,7 +20,7 @@ class WindowedJoin:
         self.storage = storage
 
         self.sc = SparkContext(self.master, "Windowed Join Query")
-        # self.sc.addPyFile('/var/scratch/ddps2105/ddps1/join.py')
+        self.sc.addPyFile('/var/scratch/ddps2105/ddps1/join.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
         self.purchase_schema = StructType([

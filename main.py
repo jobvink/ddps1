@@ -19,7 +19,7 @@ class WindowedAggregation:
         self.port = port
         self.storage = storage
         self.sc = SparkContext(self.master, "Windowed Aggregation Query")
-        # self.sc.addPyFile('/var/scratch/ddps2105/ddps1/main.py')
+        self.sc.addPyFile('/var/scratch/ddps2105/ddps1/main.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
     @staticmethod
@@ -42,7 +42,7 @@ class WindowedAggregation:
                                             'price': aggregated_result[1][0],
                                             'time': time.time(),
                                             'latency': time.time() - aggregated_result[1][1]}) \
-            .pprint()
+            .saveAsTextFiles(self.storage)
 
         self.ssc.start()
         self.ssc.awaitTermination()

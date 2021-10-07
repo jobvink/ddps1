@@ -67,7 +67,7 @@ class WindowedJoin:
                                  "time": max(record[1][0]['time'], record[1][1]['time']),
                                  "latency": time.time() - max(record[1][0]['time'], record[1][1]['time']),
                                  }) \
-            .pprint()
+            .saveAsTextFiles(self.storage)
 
         self.ssc.start()
         self.ssc.awaitTermination()

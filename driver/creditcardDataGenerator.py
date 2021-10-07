@@ -15,6 +15,7 @@ class CreditcardDataGenerator:
     def __init__(self, p_purchase, p_ad):
         self.data = pd.read_csv('./high_traffic.csv')
         self.t = 0
+        self.max_t = self.data['time'].max()
         self.start_time = None
 
         self.object_types = ["purchase", "ad"]
@@ -32,7 +33,8 @@ class CreditcardDataGenerator:
         :return:
         """
         self.start_time = time.time()
-        while True:
+
+        while self.t <= self.max_t:
             # retrieve an item from the data, cast it to a purcase of ad with according
             # probability. Than add it to the Queue.
             items = self.data[self.data['time'] == self.t].values
@@ -44,7 +46,7 @@ class CreditcardDataGenerator:
 
                 queue.put(self.cast(item, object_type))
 
-            next_event = (self.start_time - self.t + 1) - time.time()
+            next_event = (self.start_time + self.t + 1) - time.time()
             time.sleep(max(0.0, next_event))
             self.t += 1
 

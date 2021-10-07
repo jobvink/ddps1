@@ -19,7 +19,7 @@ class WindowedAggregation:
         self.port = port
         self.storage = storage
         self.sc = SparkContext(self.master, "Windowed Aggregation Query")
-        self.sc.addPyFile('/var/scratch/ddps2105/ddps1/main.py')
+        # self.sc.addPyFile('/var/scratch/ddps2105/ddps1/main.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
     @staticmethod
@@ -36,13 +36,13 @@ class WindowedAggregation:
 
         self.ssc.socketTextStream(self.host, self.port) \
             .map(json.loads) \
-            .map(lambda purchase: (str(purchase['packID']), (purchase['price'], purchase['time']))) \
+            .map(lambda purchase: (str(purchase['gemPackID']), (purchase['price'], purchase['time']))) \
             .reduceByKey(self.aggregate) \
             .map(lambda aggregated_result: {'gemPackID': aggregated_result[0],
                                             'price': aggregated_result[1][0],
                                             'time': time.time(),
                                             'latency': time.time() - aggregated_result[1][1]}) \
-            .saveAsTextFiles(self.storage)
+            .pprint()
 
         self.ssc.start()
         self.ssc.awaitTermination()

@@ -18,14 +18,14 @@ class DataStreamer:
     queue: Queue
     generators: []
 
-    def __init__(self, n_generators: int, rate: int, max_queue_size: int, budget: int, p_purchase: float, p_ad:float):
+    def __init__(self, generator,  n_generators: int, rate: int, max_queue_size: int, budget: int):
         self.n_generators = n_generators
         self.rate = rate
         self.budget = budget
         self.queue = Queue(max_queue_size)
 
         # generator for the benchmark
-        generator = BenchmarkGenerator(p_purchase, p_ad)
+        # generator = BenchmarkGenerator(p_purchase, p_ad)
 
         # These generators wil fill up the queue with purchase instances
         # in there own separate threads. Every generator generates an equal

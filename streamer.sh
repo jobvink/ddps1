@@ -19,5 +19,5 @@ export YARN_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 
-echo "starting streamer on $1 (/var/scratch/ddps2105/Python-3.9.7/python streamer.py --host $1.cm.cluster)"
-/var/scratch/ddps2105/Python-3.9.7/python streamer.py --host $1.cm.cluster
+echo "starting streamer on $1 (/var/scratch/ddps2105/Python-3.9.7/python streamer.py --host $1.cm.cluster --p-purchase 1 --p-ad 0)"
+/var/scratch/ddps2105/Python-3.9.7/python streamer.py --host $1.cm.cluster --p-purchase 1 --p-ad 0

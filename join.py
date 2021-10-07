@@ -5,7 +5,6 @@ import time
 
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.types import StructType, StructField, IntegerType, FloatType
 from pyspark.streaming import StreamingContext
 
 
@@ -22,19 +21,6 @@ class WindowedJoin:
         self.sc = SparkContext(self.master, "Windowed Join Query")
         self.sc.addPyFile('/var/scratch/ddps2105/ddps1/join.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
-
-        self.purchase_schema = StructType([
-            StructField('userID', IntegerType(), False),
-            StructField('gemPackID', IntegerType(), False),
-            StructField('price', FloatType(), True),
-            StructField('time', FloatType(), False),
-        ])
-
-        self.ad_schema = StructType([
-            StructField('userID', IntegerType(), False),
-            StructField('gemPackID', IntegerType(), False),
-            StructField('time', FloatType(), False),
-        ])
 
     def run(self):
         """
@@ -60,6 +46,8 @@ class WindowedJoin:
 
         purchases \
             .join(ads) \
+            .filter(lambda record: record[1][0]['userID'] == record[1][1]['userID'] and
+                                   record[1][0]['gemPackID'] == record[1][1]['gemPackID']) \
             .map(lambda record: {"userID": record[1][0]['userID'],
                                  "gemPackID:": record[1][1]['gemPackID'],
                                  "p.time": record[1][0]['time'],

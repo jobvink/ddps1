@@ -32,16 +32,21 @@ class WindowedAggregation:
         b = (0, 0) if b is None else b
         return a[0] + b[0], max(a[1], b[1])
 
+    @staticmethod
+    def wrap(aggregated_result):
+        end_time = time.time()
+        return {'gemPackID': aggregated_result[0],
+                'price': aggregated_result[1][0],
+                'time': end_time,
+                'latency': end_time - aggregated_result[1][1]}
+
     def run(self):
 
         self.ssc.socketTextStream(self.host, self.port) \
             .map(json.loads) \
             .map(lambda purchase: (str(purchase['gemPackID']), (purchase['price'], purchase['time']))) \
             .reduceByKey(self.aggregate) \
-            .map(lambda aggregated_result: {'gemPackID': aggregated_result[0],
-                                            'price': aggregated_result[1][0],
-                                            'time': time.time(),
-                                            'latency': time.time() - aggregated_result[1][1]}) \
+            .map(self.wrap) \
             .saveAsTextFiles(self.storage)
 
         self.ssc.start()

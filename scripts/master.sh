@@ -1,7 +1,7 @@
 cd /var/scratch/ddps2105/ddps1/ || exit
 
 cd /var/scratch/ddps2105/ddps1
-chmod +x *.sh
+chmod +x scripts/*.sh
 
 # configure python
 export PYTHONPATH="/var/scratch/ddps2105/Python-3.9.7/python"

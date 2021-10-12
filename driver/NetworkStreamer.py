@@ -1,10 +1,8 @@
 import json
 import socket
 
-from driver.consumer import Consumer
 
-
-class NetworkStreamer(Consumer):
+class NetworkStreamer:
     connection: socket.socket
 
     def __init__(self, host, port, generator):

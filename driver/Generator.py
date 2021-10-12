@@ -5,7 +5,7 @@ from typing import Any, Union
 import numpy as np
 
 
-class BenchmarkGenerator:
+class Generator:
     users: list[int]
     prices: list[float]
     packs: dict[int, float]

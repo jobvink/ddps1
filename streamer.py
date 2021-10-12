@@ -1,11 +1,9 @@
 import argparse
 import math
-from queue import Queue
 
-from benchmarks.NetworkStreamer import NetworkStreamer
-from driver.creditcardDataGenerator import CreditcardDataGenerator
-from driver.generator import BenchmarkGenerator
-from driver.streamer import DataStreamer
+from driver.NetworkStreamer import NetworkStreamer
+from driver.Generator import Generator
+from driver.DataQueue import DataQueue
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Distributed data processing asignment 1')
@@ -27,11 +25,11 @@ if __name__ == '__main__':
         print('--p-purchase and --p-ad do not sum up to 1 but to {}'.format(args.p_purchase + args.p_ad))
         exit(1)
 
-    generator = CreditcardDataGenerator(args.p_purchase, args.p_ad)
-    stream_generator = DataStreamer(generator,
-                                    args.generators,
-                                    args.rate,
-                                    math.ceil(args.budget / args.max_queue_size),
-                                    args.budget)
-    streamer = NetworkStreamer(args.host, args.port, stream_generator)
+    generator = Generator(args.p_purchase, args.p_ad)
+    data_queue = DataQueue(generator,
+                           args.generators,
+                           args.rate,
+                           math.ceil(args.budget / args.max_queue_size),
+                           args.budget)
+    streamer = NetworkStreamer(args.host, args.port, data_queue)
     streamer.run()

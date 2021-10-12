@@ -1,10 +1,8 @@
 import math
 from multiprocessing import Process, Queue
 
-from driver.generator import BenchmarkGenerator
 
-
-class DataStreamer:
+class DataQueue:
     """
     This class initializes the data generator and provides data for the Software Under Test (SUT)
 

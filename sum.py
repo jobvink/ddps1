@@ -1,3 +1,6 @@
+import argparse
+import os.path
+
 import json
 import time
 
@@ -16,6 +19,7 @@ class WindowedAggregation:
         self.port = port
         self.storage = storage
         self.sc = SparkContext(self.master, "Windowed Aggregation Query")
+        self.sc.addPyFile('/var/scratch/ddps2105/ddps1/sum.py')
         self.ssc = StreamingContext(self.sc, 4)  # 4 second window as specified in the paper
 
     @staticmethod
@@ -32,12 +36,29 @@ class WindowedAggregation:
 
         self.ssc.socketTextStream(self.host, self.port) \
             .map(json.loads) \
-            .map(lambda purchase: (str(purchase['packID']), (purchase['price'], purchase['time']))) \
+            .map(lambda purchase: (str(purchase['gemPackID']), (purchase['price'], purchase['time']))) \
             .reduceByKey(self.aggregate) \
-            .map(lambda aggregated_result: {'packID': aggregated_result[0],
+            .map(lambda aggregated_result: {'gemPackID': aggregated_result[0],
                                             'price': aggregated_result[1][0],
+                                            'time': time.time(),
                                             'latency': time.time() - aggregated_result[1][1]}) \
             .saveAsTextFiles(self.storage)
 
         self.ssc.start()
         self.ssc.awaitTermination()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Distributed data processing asignment 1')
+    parser.add_argument('--host', type=str, default='localhost')
+    parser.add_argument('--port', type=int, default=9999)
+    parser.add_argument('--storage', type=str, default='dps1/results/windowed_aggregation/')
+    parser.add_argument('--master', type=str, required=True,
+                        help='the name of the spark master node (example: spark://node102.cm.cluster:7077)')
+
+    args = parser.parse_args()
+
+    os.makedirs(args.storage, exist_ok=True)
+
+    aggregation = WindowedAggregation(args.master, args.host, args.port, args.storage)
+    aggregation.run()

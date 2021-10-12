@@ -2,7 +2,7 @@ CODE_PATH=/var/scratch/ddps2105/ddps1
 
 export SPARK_HOME=/var/scratch/ddps2105/spark-3.1.1-bin-hadoop3.2
 
-sh setup.sh
+sh scripts/setup.sh
 
 echo 'loading modules'
 module load python/3.6.0
@@ -36,13 +36,13 @@ echo "${workers[@]:2}"
 # initialize all the workers
 for worker in "${workers[@]:2}"
 do
-    echo "" | ssh "$worker" sh $CODE_PATH/worker.sh ${workers[0]} &!
+    echo "" | ssh "$worker" sh $CODE_PATH/scripts/worker.sh ${workers[0]} &!
 done
 
 echo "starting streamer node ${workers[0]}"
-echo "" | ssh "${workers[0]}" sh $CODE_PATH/streamer.sh ${workers[0]} &!
+echo "" | ssh "${workers[0]}" sh $CODE_PATH/scripts/streamer.sh ${workers[0]} &!
 sleep 10 # wait for the data streamer to start the generators
 
 echo "starting master node"
 mkdir -p "/var/scratch/ddps2105/results"
-echo "" | ssh "${workers[0]}" $CODE_PATH/master.sh "${workers[0]}" "${workers[0]}"
+echo "" | ssh "${workers[0]}" $CODE_PATH/scripts/master.sh "${workers[0]}" "${workers[0]}"

@@ -12,7 +12,8 @@ echo 'reserving nodes in the cluster'
 preserve -# 4 -t 00:30:00
 
 echo 'clearning up previous runs'
-rm -r "/var/scratch/ddps2105/results/result*"
+rm -r "/var/scratch/ddps2105/results"
+mkdir "/var/scratch/ddps2105/results"
 
 # wait one second for the command to actually reserve the nodes
 sleep 1

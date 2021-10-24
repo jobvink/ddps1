@@ -9,7 +9,7 @@ module load python/3.6.0
 module load prun
 
 echo 'reserving nodes in the cluster'
-preserve -# 6 -t 00:30:00
+preserve -# 4 -t 00:30:00
 
 echo 'clearning up previous runs'
 rm -r "/var/scratch/ddps2105/results/result*"
@@ -22,7 +22,7 @@ worker_list=$(preserve -llist | grep ddps2105 | awk '{print $9,$10,$11,$12,$13,$
 read -r -a workers <<< "$worker_list"
 echo "reserved the following nodes: ${workers[@]}"
 
-if [ ${#workers[@]} -ne 10 ]; then
+if [ ${#workers[@]} -ne 4 ]; then
   echo 'not enough nodes available'
   exit 1
 fi

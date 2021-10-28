@@ -37,23 +37,27 @@ class WindowedJoin:
         purchases: DataFrame = lines \
             .filter(lambda line: 'price' in line) \
             .map(json.loads) \
-            .map(lambda x: ('u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), x))
+            .map(lambda x: (
+        'u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), {'ingestion_time': time.time(), 'instance': x}))
 
         ads = lines \
             .filter(lambda line: 'price' not in line) \
             .map(json.loads) \
-            .map(lambda x: ('u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), x))
+            .map(lambda x: (
+        'u:' + str(x['userID']) + ',g:' + str(x['gemPackID']), {'ingestion_time': time.time(), 'instance': x}))
 
         purchases \
             .join(ads) \
-            .filter(lambda record: record[1][0]['userID'] == record[1][1]['userID'] and
-                                   record[1][0]['gemPackID'] == record[1][1]['gemPackID']) \
-            .map(lambda record: {"userID": record[1][0]['userID'],
-                                 "gemPackID:": record[1][1]['gemPackID'],
-                                 "p.time": record[1][0]['time'],
-                                 "a.time": record[1][1]['time'],
+            .filter(lambda record: record[1][0]['instance']['userID'] == record[1][1]['instance']['userID'] and
+                                   record[1][0]['instance']['gemPackID'] == record[1][1]['instance']['gemPackID']) \
+            .map(lambda record: {"userID": record[1][0]['instance']['userID'],
+                                 "gemPackID:": record[1][1]['instance']['gemPackID'],
+                                 "p.time": record[1][0]['instance']['time'],
+                                 "a.time": record[1][1]['instance']['time'],
                                  "time": time.time(),
-                                 "latency": time.time() - max(record[1][0]['time'], record[1][1]['time']),
+                                 "event_latency": time.time() - max(record[1][0]['instance']['time'], record[1][1]['instance']['time']),
+                                 "processing_latency": time.time() - max(record[1][0]['ingestion_time'],
+                                                                         record[1][1]['ingestion_time']),
                                  }) \
             .saveAsTextFiles(self.storage)
 

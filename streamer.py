@@ -2,7 +2,7 @@ import argparse
 import math
 
 from driver.NetworkStreamer import NetworkStreamer
-from driver.Generator import Generator
+from driver.CreditcardDataGenerator import CreditcardDataGenerator
 from driver.DataQueue import DataQueue
 
 if __name__ == '__main__':
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         print('--p-purchase and --p-ad do not sum up to 1 but to {}'.format(args.p_purchase + args.p_ad))
         exit(1)
 
-    generator = Generator(args.p_purchase, args.p_ad)
+    generator = CreditcardDataGenerator(args.p_purchase, args.p_ad)
     data_queue = DataQueue(generator,
                            args.generators,
                            args.rate,
